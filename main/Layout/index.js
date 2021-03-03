@@ -1,46 +1,22 @@
-import React from 'react'
-import { observer, emit, useValue, useLocal } from 'startupjs'
-import { Button, Div, H1, Layout, Menu, Portal, Row, SmartSidebar } from '@startupjs/ui'
-import { faBars } from '@fortawesome/free-solid-svg-icons'
-import APP from '../../app.json'
+import React, { useEffect } from 'react'
+import { useHistory, useLocation } from 'react-router-native'
+import { observer, useSession } from 'startupjs'
+import { Div, Layout, Portal } from '@startupjs/ui'
+
 import './index.styl'
 
-const { displayName } = APP
-
-const APP_NAME = displayName.charAt(0).toUpperCase() + displayName.slice(1)
-
-const MenuItem = observer(({ url, children }) => {
-  const [currentUrl] = useLocal('$render.url')
-  return pug`
-    Menu.Item(
-      active=currentUrl === url
-      onPress=() => emit('url', url)
-    )= children
-  `
-})
-
 export default observer(function ({ children }) {
-  const [opened, $opened] = useValue(false)
+  const [userName] = useSession('userName')
+  const history = useHistory()
+  const location = useLocation()
 
-  function renderSidebar () {
-    return pug`
-      Menu.sidebar-menu
-        MenuItem(url='/') App
-        MenuItem(url='/about') About
-    `
-  }
+  useEffect(() => {
+    if (location.pathname !== '/' && !userName) history.push('/')
+  }, [location, userName])
 
   return pug`
     Portal.Provider
       Layout
-        SmartSidebar.sidebar(
-          $open=$opened
-          renderContent=renderSidebar
-        )
-          Row.menu
-            Button(color='secondaryText' icon=faBars onPress=() => $opened.set(!opened))
-            H1.logo= APP_NAME
-
-          Div.body= children
+        Div.body= children
   `
 })
