@@ -49,12 +49,11 @@ export default observer(function PGame ({ gameId, backToGames }) {
   useEffect(() => {
     if (game.status === GAME_STATUS.COMPLETED) backToGames()
   }, [game.status])
-
   return pug`
-    Title #{game.name} - раунд #{game.history.length}
+    Title= game.name + ' - раунд ' + game.history.length
     Row.rival
       Span(bold) Ваш соперник#{' '}
-      Span #{getRivalText()}
+      Span= getRivalText()
     if (game.status === GAME_STATUS.WAITING_NEW_ROUND)
       Div.winner
         Span.text(
@@ -64,7 +63,7 @@ export default observer(function PGame ({ gameId, backToGames }) {
             won: currentRound.winner === userName,
             lost: currentRound.winner !== null && currentRound.winner !== userName
           }
-        ) Победил в раунде #{game.history.length} - #{game[currentRound.winner] || 'Ничья'}
+        )= 'Победил в раунде ' + game.history.length +' - ' + (game[currentRound.winner] || 'Ничья')
         Span Ждем следующий раунд
     Radio.radio(
       value=currentRound[isFirstUser ? 'firstUserAnswer' : 'secondUserAnswer']

@@ -5,6 +5,6 @@ import './index.styl'
 
 export default function Title ({ children }) {
   return pug`
-    H1.title(bold) #{children}
+    H1.title(bold)= children
   `
 }

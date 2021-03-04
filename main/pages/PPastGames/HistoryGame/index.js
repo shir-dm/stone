@@ -24,7 +24,7 @@ export default observer(function PPastGames ({ history, firstUserName, secondUse
       Div(
         key=index
       )
-        Span(bold).round Раунд #{index + 1}
+        Span.round(bold) Раунд #{index + 1}
         Table.table
           Thead
             Tr
@@ -34,14 +34,14 @@ export default observer(function PPastGames ({ history, firstUserName, secondUse
               Th Всего баллов
           Tbody
             Tr
-              Td #{firstUserName}
-              Td #{ANSWER[item.firstUserAnswer.toUpperCase()].LABEL}
-              Td #{item.scoreFirstUser}
-              Td #{item.allScoreFirstUser}
+              Td= firstUserName
+              Td= ANSWER[item.firstUserAnswer.toUpperCase()].LABEL
+              Td= item.scoreFirstUser
+              Td= item.allScoreFirstUser
             Tr
-              Td #{secondUserName}
-              Td #{ANSWER[item.secondUserAnswer.toUpperCase()].LABEL}
-              Td #{item.scoreSecondUser}
-              Td #{item.allScoreSecondUser}
+              Td= secondUserName
+              Td= ANSWER[item.secondUserAnswer.toUpperCase()].LABEL
+              Td= item.scoreSecondUser
+              Td= item.allScoreSecondUser
   `
 })

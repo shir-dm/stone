@@ -65,16 +65,16 @@ export default observer(function GamesList () {
             Span(
               bold
               variant="h6"
-            ) #{game.name}
+            )= game.name
             Row
               Span(italic) Дата создания:#{' '}
-              Span #{moment(game.createdAt).format('MM-DD-YYYY:HH-MM')}
+              Span= moment(game.createdAt).format('MM-DD-YYYY:HH-MM')
             Row
               Span(italic) Количество участников:#{' '}
-              Span #{getCountPlayers(game)}
+              Span= getCountPlayers(game)
             Row
               Span(italic) Профессор:#{' '}
-              Span #{game.professor}
+              Span= game.professor
           Button(
             onPress=() => joinGame(game)
             color='primary'

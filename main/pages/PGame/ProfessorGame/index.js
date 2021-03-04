@@ -28,14 +28,14 @@ export default observer(function PGame ({ gameId, backToGames }) {
   }
 
   return pug`
-    Title #{game.name} - раунд #{game.history.length}
+    Title= game.name + ' - раунд ' + game.history.length
     Div.answers
       Row
-        Span(bold) #{game.firstUser || 'Первый игкрок еще не вошел в игру'}: #{' '}
-        Span #{getAnser(true)}
+        Span(bold)= (game.firstUser || 'Первый игрок еще не вошел в игру') + ': '
+        Span= getAnser(true)
       Row
-        Span(bold) #{game.secondUser || 'Второй игкрок еще не вошел в игру'}: #{' '}
-        Span #{getAnser()}
+        Span(bold)= (game.secondUser || 'Второй игрок еще не вошел в игру') + ': '
+        Span= getAnser()
     Button.new(
       disabled=game.status !== GAME_STATUS.WAITING_NEW_ROUND
       onPress=newRound

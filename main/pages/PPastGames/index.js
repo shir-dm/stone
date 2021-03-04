@@ -62,16 +62,16 @@ export default observer(function PPastGames () {
               Span(
                 bold
                 variant="h6"
-              ) #{game.name}
+              )= game.name
               Row
                 Span(italic) Игроки:#{' '}
-                Span #{game.firstUser} / #{game.secondUser}
+                Span= game.firstUser + ' / ' + game.secondUser
               Row
                 Span(italic) Cчет:#{' '}
-                Span #{getScore(true, game.history)} / #{getScore(false, game.history)}
+                Span= getScore(true, game.history) + ' / ' + getScore(false, game.history)
               Row
                 Span(italic) Профессор: #{' '}
-                Span #{game.professor}
+                Span= game.professor
               Collapse.collapse(
                 open=expand === game.id
                 title="История игры"
