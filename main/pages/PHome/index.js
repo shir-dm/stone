@@ -1,26 +1,16 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { ScrollView } from 'react-native'
-import { useHistory } from 'react-router-native'
 import { observer, useSession, useQuery } from 'startupjs'
-import { Content, Div, TextInput, Checkbox, Br, Button, H2, Span, Row } from '@startupjs/ui'
+import { Content, Checkbox, H2, Span, Row } from '@startupjs/ui'
+import { AuthForm } from '@startupjs/auth'
+import * as localForms from '@startupjs/auth-local'
 import { Title } from 'components'
 import { GAME_STATUS } from 'helpers/constants'
 
 import './index.styl'
 
 export default observer(function PHome () {
-  const [name, setName] = useState('')
-  const [isProfessor, setIsProfessor] = useState(false)
-  const [, $userName] = useSession('userName')
-  const [, $isProfessor] = useSession('isProfessor')
   const [games = []] = useQuery('games', { status: { $ne: GAME_STATUS.WAITING_PLAYERS } })
-  const history = useHistory()
-
-  const onEnter = async () => {
-    await $userName.set(name)
-    await $isProfessor.set(isProfessor)
-    history.push('/games')
-  }
 
   const getScoreTable = () => {
     let scoreTable = []
@@ -48,36 +38,18 @@ export default observer(function PHome () {
   return pug`
     Content.root
       Title Игра "Камень - ножница - бумага"
-      Div
-        TextInput.name(
-          label='Имя'
-          placeholder='Введите свое имя'
-          value=name
-          onChangeText=setName
-        )
-        Br
-        Checkbox(
-          label='Войти как профессор'
-          value=isProfessor
-          onChange=setIsProfessor
-        )
-        Br
-        Button(
-          onPress=onEnter
-          color='primary'
-          variant='flat'
-          disabled=name.length <=2
-        ) Войти
-      H2.leaders(bold) Лидеры
-      ScrollView.scroll
-        each item, index in getScoreTable()
-          Row.row(
-            level=3
-            align="between"
-            shape="rounded"
-            key=index
-          )
-            Span(styleName={isFirst: index === 0}) #{item.name}
-            Span(styleName={isFirst: index === 0}) #{item.score}
+      AuthForm(localForms=localForms)
+      if (getScoreTable().length > 0)
+        H2.leaders(bold) Лидеры
+        ScrollView.scroll
+          each item, index in getScoreTable()
+            Row.row(
+              level=3
+              align="between"
+              shape="rounded"
+              key=index
+            )
+              Span(styleName={isFirst: index === 0})= item.name
+              Span(styleName={isFirst: index === 0})= item.score
   `
 })

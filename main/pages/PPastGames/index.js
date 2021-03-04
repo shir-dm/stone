@@ -14,7 +14,7 @@ export default observer(function PPastGames () {
   const [expand, setExpand] = useState()
   const [isProfessor] = useSession('isProfessor')
   const [page, setPage] = useState(0)
-  const [userName] = useSession('userName')
+  const [userName] = useSession('user.firstName')
   const queryForGamesList = isProfessor
     ? {
         professor: userName,

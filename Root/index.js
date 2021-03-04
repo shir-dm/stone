@@ -2,6 +2,8 @@ import React from 'react'
 import { Platform } from 'react-native'
 import init from 'startupjs/init'
 import App from 'startupjs/app'
+import { initAuthApp } from '@startupjs/auth'
+import * as localForms from '@startupjs/auth-local'
 import { observer, model } from 'startupjs'
 import { BASE_URL } from '@env'
 import orm from '../model'
@@ -18,9 +20,13 @@ if (Platform.OS === 'web') window.model = model
 init({ baseUrl: BASE_URL, orm })
 
 export default observer(() => {
+  const auth = initAuthApp({
+    localForms
+  })
+
   return pug`
     App(
-      apps={main}
+      apps={main, auth}
     )
   `
 })

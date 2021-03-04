@@ -20,7 +20,7 @@ export default observer(function PGame ({ gameId, backToGames }) {
     _answer.sort((a, b) => a.order - b.order)
     return _answer
   })
-  const [userName] = useSession('userName')
+  const [userName] = useSession('user.firstName')
   const [game = {}, $game] = useDoc('games', gameId)
   const currentRound = (game.history && game.history[game.history.length - 1]) || {}
   const isFirstUser = game.firstUser === userName

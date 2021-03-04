@@ -6,13 +6,13 @@ import { Div, Layout, Portal } from '@startupjs/ui'
 import './index.styl'
 
 export default observer(function ({ children }) {
-  const [userName] = useSession('userName')
+  const [loggedIn] = useSession('loggedIn')
   const history = useHistory()
   const location = useLocation()
 
   useEffect(() => {
-    if (location.pathname !== '/' && !userName) history.push('/')
-  }, [location, userName])
+    if (location.pathname !== '/' && !loggedIn) history.push('/')
+  }, [location, loggedIn])
 
   return pug`
     Portal.Provider

@@ -1,14 +1,14 @@
 import React, { useState } from 'react'
 import { observer, useSession, useModel } from 'startupjs'
-import { Content, Button, TextInput, Link, Row} from '@startupjs/ui'
+import { Content, Button, TextInput, Link, Row, Checkbox } from '@startupjs/ui'
 import { Title } from 'components'
 import GamesList from './GamesList'
 
 import './index.styl'
 
 export default observer(function PGames () {
-  const [isProfessor] = useSession('isProfessor')
-  const [userName] = useSession('userName')
+  const [isProfessor, $isProfessor] = useSession('isProfessor')
+  const [userName] = useSession('user.firstName')
   const [gameName, setGameName] = useState('')
   const $games = useModel('games')
 
@@ -34,7 +34,12 @@ export default observer(function PGames () {
           onPress=onCreateGame
         ) Создать игру
       GamesList
-      Row(align="right")
+      Row(align="between" vAlign="center")
+        Checkbox(
+          label='Стать профессором'
+          value=isProfessor
+          onChange=(value) => $isProfessor.set(value)
+        )
         Link.pastGame(
           to="/past-games"
         ) Пройденные игры

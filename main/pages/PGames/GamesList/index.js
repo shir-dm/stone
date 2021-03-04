@@ -13,7 +13,7 @@ const LIMIT = 10
 export default observer(function GamesList () {
   const history = useHistory()
   const [isProfessor] = useSession('isProfessor')
-  const [userName] = useSession('userName')
+  const [userName] = useSession('user.firstName')
   const [page, setPage] = useState(0)
   const queryForGamesList = isProfessor
     ? {
