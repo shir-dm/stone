@@ -1,14 +1,13 @@
-import React, { useState, useEffect } from 'react'
+import React, { useMemo, useEffect } from 'react'
 import { observer, useSession, useDoc } from 'startupjs'
 import { Div, Radio, Span, Row } from '@startupjs/ui'
 import { Title } from 'components'
 import { ANSWER, GAME_STATUS } from 'helpers/constants'
-import getResultGame from 'helpers/getResultGame'
 
 import './index.styl'
 
 export default observer(function PGame ({ gameId, backToGames }) {
-  const [answer] = useState(() => {
+  const answer = useMemo(() => {
     const _answer = []
     for (const key in ANSWER) {
       _answer.push({
@@ -19,36 +18,30 @@ export default observer(function PGame ({ gameId, backToGames }) {
     }
     _answer.sort((a, b) => a.order - b.order)
     return _answer
-  })
-  const [userName] = useSession('user.firstName')
+  }, [])
+  const [user] = useSession('user')
   const [game = {}, $game] = useDoc('games', gameId)
   const currentRound = (game.history && game.history[game.history.length - 1]) || {}
-  const isFirstUser = game.firstUser === userName
+  const isFirstUser = game.firstUser === user.id
+  const [rival] = useDoc('users', isFirstUser ? game.secondUser : game.firstUser)
 
-  const setAnser = (value) => {
-    if ((isFirstUser && !currentRound.secondUserAnswer) || (!isFirstUser && !currentRound.firstUserAnswer)) {
-      return $game.set(`history.${game.history.length - 1}.${isFirstUser ? 'firstUserAnswer' : 'secondUserAnswer'}`, value)
-    }
-
-    const result = getResultGame(
-      isFirstUser ? value : currentRound.firstUserAnswer,
-      isFirstUser ? currentRound.secondUserAnswer : value,
-      game.history[game.history.length - 2]
-    )
-
-    $game.set(`history.${game.history.length - 1}`, result)
-    $game.set('status', GAME_STATUS.WAITING_NEW_ROUND)
-  }
+  const setAnser = (value) => $game.setAnser(isFirstUser, value)
 
   const getRivalText = () => {
-    if (isFirstUser && game.secondUser) return game.secondUser
-    if (!isFirstUser) return game.firstUser
+    if (rival) return rival.firstName
     return 'еще не зашел в игру'
+  }
+
+  const getWinName = () => {
+    if (game[currentRound.winner] || game[currentRound.winner] === user.id) return user.firstName
+    if (game[currentRound.winner]) return rival.firstName
+    return 'Ничья'
   }
 
   useEffect(() => {
     if (game.status === GAME_STATUS.COMPLETED) backToGames()
   }, [game.status])
+
   return pug`
     Title= game.name + ' - раунд ' + game.history.length
     Row.rival
@@ -56,19 +49,18 @@ export default observer(function PGame ({ gameId, backToGames }) {
       Span= getRivalText()
     if (game.status === GAME_STATUS.WAITING_NEW_ROUND)
       Div.winner
-        Span.text(
+        Span.won(
           bold
           variant='h5'
           styleName={
-            won: currentRound.winner === userName,
-            lost: currentRound.winner !== null && currentRound.winner !== userName
+            lost: (currentRound.winner === 'firstUser' && !isFirstUser) || (currentRound.winner === 'secondUser' && isFirstUser)
           }
-        )= 'Победил в раунде ' + game.history.length +' - ' + (game[currentRound.winner] || 'Ничья')
+        )= 'Победил в раунде ' + game.history.length +' - ' + getWinName()
         Span Ждем следующий раунд
     Radio.radio(
       value=currentRound[isFirstUser ? 'firstUserAnswer' : 'secondUserAnswer']
       onChange=setAnser
-      disabled=currentRound[isFirstUser ? 'firstUserAnswer' : 'secondUserAnswer']
+      disabled=!!currentRound[isFirstUser ? 'firstUserAnswer' : 'secondUserAnswer']
       options=answer
     )
   `

@@ -35,7 +35,7 @@ startupjsServer({
 function getHead (appName) {
   return `
     ${getUiHead()}
-    <title>HelloWorld</title>
+    <title>Stone</title>
     <!-- Put vendor JS and CSS here -->
   `
 }

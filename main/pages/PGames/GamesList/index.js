@@ -2,9 +2,9 @@ import React, { useState } from 'react'
 import { ScrollView } from 'react-native'
 import { useHistory } from 'react-router-native'
 import { observer, useSession, useBatchQuery, useBatch } from 'startupjs'
-import { Row, Pagination, Button, Span, Div } from '@startupjs/ui'
-import moment from 'moment'
+import { Row, Pagination } from '@startupjs/ui'
 import { GAME_STATUS } from 'helpers/constants'
+import Game from '../Game'
 
 import './index.styl'
 
@@ -13,17 +13,17 @@ const LIMIT = 10
 export default observer(function GamesList () {
   const history = useHistory()
   const [isProfessor] = useSession('isProfessor')
-  const [userName] = useSession('user.firstName')
+  const [userId] = useSession('user.id')
   const [page, setPage] = useState(0)
   const queryForGamesList = isProfessor
     ? {
-        professor: userName,
+        professor: userId,
         status: { $ne: GAME_STATUS.COMPLETED }
       }
     : {
         $or: [
-          { firstUser: userName, status: { $ne: GAME_STATUS.COMPLETED } },
-          { secondUser: userName, status: { $ne: GAME_STATUS.COMPLETED } },
+          { firstUser: userId, status: { $ne: GAME_STATUS.COMPLETED } },
+          { secondUser: userId, status: { $ne: GAME_STATUS.COMPLETED } },
           { status: GAME_STATUS.WAITING_PLAYERS }
         ]
       }
@@ -39,12 +39,12 @@ export default observer(function GamesList () {
   }
 
   const joinGame = (game) => {
-    if (!isProfessor && game.firstUser !== userName && game.secondUser !== userName && game.firstUser) {
-      $gamesList.set(`${game.id}.secondUser`, userName)
+    if (!isProfessor && game.firstUser !== userId && game.secondUser !== userId && game.firstUser) {
+      $gamesList.set(`${game.id}.secondUser`, userId)
       $gamesList.set(`${game.id}.status`, GAME_STATUS.WAITING_ANSWER_PLAYERS)
     }
-    if (!isProfessor && game.firstUser !== userName && game.secondUser !== userName && !game.firstUser) {
-      $gamesList.set(`${game.id}.firstUser`, userName)
+    if (!isProfessor && game.firstUser !== userId && game.secondUser !== userId && !game.firstUser) {
+      $gamesList.set(`${game.id}.firstUser`, userId)
     }
     history.push(`/games/${game.id}`)
   }
@@ -54,32 +54,7 @@ export default observer(function GamesList () {
   return pug`
     ScrollView.scroll
       each game, index in gamesList
-        Row.row(
-          key=index
-          level=3
-          align="between"
-          vAlign="center"
-          shape="rounded"
-        )
-          Div
-            Span(
-              bold
-              variant="h6"
-            )= game.name
-            Row
-              Span(italic) Дата создания:#{' '}
-              Span= moment(game.createdAt).format('MM-DD-YYYY:HH-MM')
-            Row
-              Span(italic) Количество участников:#{' '}
-              Span= getCountPlayers(game)
-            Row
-              Span(italic) Профессор:#{' '}
-              Span= game.professor
-          Button(
-            onPress=() => joinGame(game)
-            color='primary'
-            variant='flat'
-          ) Присоединиться
+        Game(game=game joinGame=joinGame getCountPlayers=getCountPlayers key=game.id)
     if (pages > 1)
       Row(
         align="center"

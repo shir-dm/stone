@@ -8,12 +8,12 @@ import './index.styl'
 
 export default observer(function PGames () {
   const [isProfessor, $isProfessor] = useSession('isProfessor')
-  const [userName] = useSession('user.firstName')
+  const [userId] = useSession('user.id')
   const [gameName, setGameName] = useState('')
   const $games = useModel('games')
 
   const onCreateGame = () => {
-    $games.addNew(gameName, userName)
+    $games.addNew(gameName, userId)
     setGameName('')
   }
 

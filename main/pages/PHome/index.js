@@ -1,7 +1,7 @@
 import React from 'react'
 import { ScrollView } from 'react-native'
-import { observer, useSession, useQuery } from 'startupjs'
-import { Content, Checkbox, H2, Span, Row } from '@startupjs/ui'
+import { observer, useQuery } from 'startupjs'
+import { Content, H2, Span, Row } from '@startupjs/ui'
 import { AuthForm } from '@startupjs/auth'
 import * as localForms from '@startupjs/auth-local'
 import { Title } from 'components'
@@ -11,6 +11,13 @@ import './index.styl'
 
 export default observer(function PHome () {
   const [games = []] = useQuery('games', { status: { $ne: GAME_STATUS.WAITING_PLAYERS } })
+  const [users] = useQuery('users', {})
+
+  const getName = (id) => {
+    const user = users.find(e => e.id === id)
+    if (user) return user.firstName
+    return 'Неизвестный юзер'
+  }
 
   const getScoreTable = () => {
     let scoreTable = []
@@ -26,7 +33,7 @@ export default observer(function PHome () {
 
       for (const key in players) {
         scoreTable.push({
-          name: key,
+          name: getName(key),
           score: players[key]
         })
       }

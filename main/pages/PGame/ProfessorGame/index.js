@@ -8,6 +8,8 @@ import './index.styl'
 
 export default observer(function PGame ({ gameId, backToGames }) {
   const [game = {}, $game] = useDoc('games', gameId)
+  const [firstUser] = useDoc('users', game.firstUser)
+  const [secondUser] = useDoc('users', game.secondUser)
 
   const newRound = () => {
     $game.set('history', [...game.history, {}])
@@ -31,10 +33,10 @@ export default observer(function PGame ({ gameId, backToGames }) {
     Title= game.name + ' - раунд ' + game.history.length
     Div.answers
       Row
-        Span(bold)= (game.firstUser || 'Первый игрок еще не вошел в игру') + ': '
+        Span(bold)= (firstUser.firstName || 'Первый игрок еще не вошел в игру') + ': '
         Span= getAnser(true)
       Row
-        Span(bold)= (game.secondUser || 'Второй игрок еще не вошел в игру') + ': '
+        Span(bold)= (secondUser.firstName|| 'Второй игрок еще не вошел в игру') + ': '
         Span= getAnser()
     Button.new(
       disabled=game.status !== GAME_STATUS.WAITING_NEW_ROUND

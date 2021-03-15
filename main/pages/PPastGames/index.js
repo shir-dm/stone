@@ -14,21 +14,29 @@ export default observer(function PPastGames () {
   const [expand, setExpand] = useState()
   const [isProfessor] = useSession('isProfessor')
   const [page, setPage] = useState(0)
-  const [userName] = useSession('user.firstName')
+  const [userId] = useSession('user.id')
   const queryForGamesList = isProfessor
     ? {
-        professor: userName,
+        professor: userId,
         status: GAME_STATUS.COMPLETED
       }
     : {
         $or: [
-          { firstUser: userName, status: GAME_STATUS.COMPLETED },
-          { secondUser: userName, status: GAME_STATUS.COMPLETED }
+          { firstUser: userId, status: GAME_STATUS.COMPLETED },
+          { secondUser: userId, status: GAME_STATUS.COMPLETED }
         ]
       }
+  const [users] = useBatchQuery('users', {})
   const [gamesList = []] = useBatchQuery('games', { ...queryForGamesList, $skip: page * LIMIT, $limit: LIMIT })
   const [gamesListCount] = useBatchQuery('games', { ...queryForGamesList, $count: true })
+
   useBatch()
+
+  const getName = (id) => {
+    const user = users.find(e => e.id === id)
+    if (user) return user.firstName
+    return 'Неизвестный юзер'
+  }
 
   const getScore = (isFirstUser, history) => {
     return history[history.length - 1][isFirstUser ? 'allScoreFirstUser' : 'allScoreSecondUser']
@@ -65,13 +73,13 @@ export default observer(function PPastGames () {
               )= game.name
               Row
                 Span(italic) Игроки:#{' '}
-                Span= game.firstUser + ' / ' + game.secondUser
+                Span= getName(game.firstUser) + ' / ' + getName(game.secondUser)
               Row
                 Span(italic) Cчет:#{' '}
                 Span= getScore(true, game.history) + ' / ' + getScore(false, game.history)
               Row
                 Span(italic) Профессор: #{' '}
-                Span= game.professor
+                Span= getName(game.professor)
               Collapse.collapse(
                 open=expand === game.id
                 title="История игры"
@@ -79,7 +87,7 @@ export default observer(function PPastGames () {
                 variant="pure"
               )
                 if (expand === game.id)
-                  HistoryGame(history=game.history firstUserName=game.firstUser secondUserName=game.secondUser)
+                  HistoryGame(history=game.history firstUserName=getName(game.firstUser) secondUserName=getName(game.secondUser))
         if (pages > 1)
           Row(align="center")
             Pagination(

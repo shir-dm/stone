@@ -3,7 +3,6 @@ import { GAME_STATUS } from 'helpers/constants'
 
 export default class GamesModel extends BaseModel {
   async addNew (name, professor) {
-    console.log('professor', professor)
     const createdAt = Date.now()
     const id = await this.add({
       name,
