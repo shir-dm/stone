@@ -10,7 +10,7 @@ export default observer(function Game ({ game, joinGame, getCountPlayers }) {
 
   return pug`
     Row.row(
-      level=3
+      level=1
       align="between"
       vAlign="center"
       shape="rounded"
@@ -33,6 +33,6 @@ export default observer(function Game ({ game, joinGame, getCountPlayers }) {
         onPress=() => joinGame(game)
         color='primary'
         variant='flat'
-      ) Присоединиться
+      ) Войти
   `
 })

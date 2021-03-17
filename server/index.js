@@ -23,7 +23,6 @@ startupjsServer({
   initApp(ee)
   initUi(ee, options)
   initAuth(ee, {
-    successRedirectUrl: '/games',
     strategies: [new LocalStrategy({})]
   })
 

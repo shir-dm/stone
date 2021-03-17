@@ -28,20 +28,32 @@ export default observer(function PPastGames ({ history, firstUserName, secondUse
         Table.table
           Thead
             Tr
-              Th Игрок
-              Th Ответ
-              Th Баллы за раунд
-              Th Всего баллов
+              Th
+                Span Игрок
+              Th
+                Span Ответ
+              Th
+                Span Баллы за раунд
+              Th
+                Span Всего баллов
           Tbody
             Tr
-              Td= firstUserName
-              Td= ANSWER[item.firstUserAnswer.toUpperCase()].LABEL
-              Td= item.scoreFirstUser
-              Td= item.allScoreFirstUser
+              Td
+                Span= firstUserName
+              Td
+                Span= ANSWER[item.firstUserAnswer.toUpperCase()].LABEL
+              Td
+                Span= item.scoreFirstUser
+              Td
+                Span= item.allScoreFirstUser
             Tr
-              Td= secondUserName
-              Td= ANSWER[item.secondUserAnswer.toUpperCase()].LABEL
-              Td= item.scoreSecondUser
-              Td= item.allScoreSecondUser
+              Td
+                Span= secondUserName
+              Td
+                Span= ANSWER[item.secondUserAnswer.toUpperCase()].LABEL
+              Td
+                Span= item.scoreSecondUser
+              Td
+                Span= item.allScoreSecondUser
   `
 })
